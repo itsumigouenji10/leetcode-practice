@@ -3,47 +3,45 @@
     Link - https://leetcode.com/problems/remove-duplicates-from-sorted-array/description/?envType=problem-list-v2&envId=array
     Notes have been provided in a seperate folder '/notes'
 """
-from collections import Counter
 
 def remove_duplicates(nums):
     # This function contains the optimal solution
-    # Initially I thought let's just use sets but then I remembered that set does not preserve order
-    # Since we don't want that, our other solution was to use a hash map that keeps the count
-    
-    # Let's just handle the empty array test case right away
+    # Time complexity: O(n), Space complexity: O(1)
+    # The pattern is Two pointers so we use writer and reader pointers to keep a track of the unique value
     if not nums:
         print("It's an empty list!")
         return 0, nums
-    
-    count = Counter(nums)
-    unique = []
 
-    for num in nums:
-        if count[num] > 0:
-            unique.append(num)
-        count[num] = 0
+    w = 0
+    for r in range(1, len(nums)):
+            if nums[r] != nums[w]:      # found a new unique
+                w += 1
+                nums[w] = nums[r]  
 
-    return len(unique), unique
+    return w+1, nums[0:w+1]  
 
 def remove_duplicates_brute(nums):
     # This function contains the brute-force solution (trade-offs discussed in /notes folder)
-    # Time complexity - O(n) 
-    # Space complexity - O(k) since we use the exact same data structure
-    # Simply looping over using for doesn't always consider all the duplicates and also can throw out of bounds error
-    # Because of this using the same data structure isn't optimal so a new data structure is required
-    # Which is why we used 'seen' as an array that only contains elements from nums that were not seen before
+    # Time complexity - O(n^2) 
+    # Space complexity - O(1) since we use the exact same data structure
 
     # Let's just handle the empty array test case right away
     if not nums:
-        print("It's an empty list!")
         return 0, nums
-    
-    seen = []
-    for num in nums:
-        if num not in seen:
-            seen.append(num)
 
-    return len(seen), seen
+    i = 0
+    # keep checking until the element just before the last one
+    while i < len(nums) - 1:
+        # if a duplicate run starts here
+        if nums[i] == nums[i + 1]:
+            val = nums[i]
+            # remove every extra copy of that value
+            while i + 1 < len(nums) and nums[i + 1] == val:
+                del nums[i + 1]
+        else:
+            i += 1
+
+    return len(nums), nums
 
 if __name__ == "__main__":
     nums = [2,2,2,3,3,4,4,4,4,4,5,6,6,6,7,8]
